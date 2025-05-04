@@ -1,0 +1,38 @@
+version: '3'
+
+networks:
+  default:
+    driver: bridge
+
+services:
+  influxdb:
+    image: influxdb:2.7.5-alpine
+    networks:
+      - default
+    container_name: influxdb
+    ports:
+      - "8086:8086"
+    volumes:
+      - $DOCKERDIR/appdata/influxdb2/config:/etc/influxdb2:rw
+      - $DOCKERDIR/appdata/influxdb2/db:/var/lib/influxdb2:rw
+    environment:
+      - INFLUXDB_DB=db0
+      - INFLUXDB_ADMIN_USER=admin
+      - INFLUXDB_ADMIN_PASSWORD=admin
+    
+  # grafana:
+  #   image: grafana/grafana:10.0.10-ubuntu
+  #   ports:
+  #     - "3000:3000"
+  #   volumes:
+  #     - grafana-storage:/var/lib/grafana
+  #     - ./grafana-provisioning/:/etc/grafana/provisioning
+  #   depends_on:
+  #     - influxdb
+  #   environment:
+  #     - GF_SECURITY_ADMIN_USER=admin
+  #     - GF_SECURITY_ADMIN_PASSWORD=admin
+
+volumes:
+  influxdbv2:
+  # grafana-storage:

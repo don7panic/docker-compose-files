@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  mysql8:
+    image: mysql:8
+    container_name: mysql8
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: admin
+      MYSQL_DATABASE: $MYSQL_DATABASE
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: admin
+    volumes:
+      - ~/docker-volumes/mysql-data:/var/lib/mysql # 挂载数据卷
+    networks:
+      - local-services
+    command: >
+      mysqld
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_unicode_ci
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+
+  redis7:
+    image: redis:7
+    container_name: redis7
+    ports:
+      - "6379:6379"
+    volumes:
+      - ~/docker-volumes/redis-data:/data
+    networks:
+      - local-services
+    command: 
+      redis-server 
+      --save 60 1 
+      --loglevel warning 
+      --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+networks:
+  local-services:
+    driver: bridge
