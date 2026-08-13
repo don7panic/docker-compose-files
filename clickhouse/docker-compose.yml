@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   clickhouse:
     image: clickhouse/clickhouse-server:26.3 # LTS 版本（每年 3 月 / 8 月发布的是 LTS）
@@ -14,7 +12,9 @@ services:
       CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: 1
     volumes:
       - ~/docker-volumes/clickhouse-data:/var/lib/clickhouse # 数据目录
-      - ~/docker-volumes/clickhouse-logs:/var/log/clickhouse-server # 日志目录
+      - ./config.d:/etc/clickhouse-server/config.d:ro # 性能配置:关闭系统日志表(本地开发用)
+    cpus: 2 # 限制最多 2 核,防止日志表合并/数据合并吃满所有核
+    mem_limit: 4g # 限制内存,防止合并失败重试循环
     ulimits:
       nofile:
         soft: 262144

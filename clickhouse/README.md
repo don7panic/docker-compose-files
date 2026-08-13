@@ -68,7 +68,17 @@ docker-compose up -d
 ## 数据持久化
 
 - 数据目录: `~/docker-volumes/clickhouse-data`
-- 日志目录: `~/docker-volumes/clickhouse-logs`
+- 配置目录: `./config.d`(只读挂载进容器)
+
+## 性能与日志说明
+
+本地开发模式下,通过 `config.d/disable-system-logs.xml` 关闭了 ClickHouse 的系统日志表
+(`metric_log`、`query_log` 等,它们每秒写盘 + 后台合并,是本地 CPU 开销的主要来源):
+配置里删除这些表的段落,服务端便不再创建新日志表、不再写入;
+旧表数据保留在磁盘上但不再增长。服务器日志级别也降到了 `error`,
+并在 compose 里限制容器最多用 2 核 / 4GB 内存。
+
+想恢复日志:删掉 `config.d/disable-system-logs.xml`,然后 `docker compose up -d`。
 
 删掉容器数据不会丢，重新 `up -d` 就回来了。
 

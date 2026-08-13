@@ -1,0 +1,32 @@
+<clickhouse>
+    <!--
+      本地开发环境专用:关闭系统日志表。
+      原理:把默认配置里各 *_log 表段落整段删除,服务端检测不到配置
+      就不会创建/写入这些表 —— 消除 metric_log 每秒刷盘、query_log 写日志、
+      以及日志表后台合并带来的 CPU 开销。
+      旧表数据仍在磁盘上(只读),想恢复日志:删掉本文件后 docker compose up -d。
+    -->
+    <metric_log remove="1"/>
+    <asynchronous_metric_log remove="1"/>
+    <query_log remove="1"/>
+    <query_thread_log remove="1"/>
+    <query_views_log remove="1"/>
+    <trace_log remove="1"/>
+    <text_log remove="1"/>
+    <part_log remove="1"/>
+    <crash_log remove="1"/>
+    <error_log remove="1"/>
+    <session_log remove="1"/>
+    <backup_log remove="1"/>
+    <processors_profile_log remove="1"/>
+    <background_schedule_pool_log remove="1"/>
+    <blob_storage_log remove="1"/>
+    <aggregated_zookeeper_log remove="1"/>
+    <zookeeper_log remove="1"/>
+    <zookeeper_connection_log remove="1"/>
+
+    <!-- 服务器自己的日志文件也只留 error 级别,大幅减少写盘 -->
+    <logger>
+        <level>error</level>
+    </logger>
+</clickhouse>
