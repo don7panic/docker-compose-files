@@ -1,0 +1,4 @@
+<clickhouse>
+    <!-- 替换默认回环监听，使同一 Docker 网络中的 Metabase 可访问 ClickHouse。 -->
+    <listen_host replace="replace">0.0.0.0</listen_host>
+</clickhouse>
